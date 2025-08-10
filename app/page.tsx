@@ -3,7 +3,9 @@ import React, {FC,useState} from "react";
 import Heading from "./utils/Heading";
 import Header from "./components/Header";
 
-interface Props {}
+interface Props {
+  title:string,
+}
 
 const Page: FC<Props> = (props) => {
     const [open, setOpen] = useState(false);
