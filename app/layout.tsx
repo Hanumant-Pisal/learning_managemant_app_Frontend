@@ -24,12 +24,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} ${josefin.variable} bg-white dark:bg-gradient-to-b bg-no-repeat dark:from-gray-900 dark:to-black`}>
+      <body className={`${poppins.variable} ${josefin.variable} bg-white dark:bg-gray-900 transition-colors duration-200`}>
         <ThemeProvider 
-          attribute="class" 
-          defaultTheme="system" 
-          enableSystem
-          disableTransitionOnChange
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          storageKey="elearning-theme"
+          enableColorScheme={true}
         >
           {children}
         </ThemeProvider>
