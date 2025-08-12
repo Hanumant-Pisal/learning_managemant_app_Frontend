@@ -22,7 +22,9 @@ const Page: FC<Props> = (props) => {
                 setOpen={setOpen}
                 activeItem={activeItem}
             />
-            <Hero />
+            <div className="mt-[70px]">
+              <Hero />
+            </div>
         </div>
     );
 };

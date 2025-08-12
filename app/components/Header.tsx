@@ -34,10 +34,10 @@ const Header: FC<Props> = ({ activeItem, setOpen }) => {
   return (
     <div className="w-full relative">
       <div
-        className={`${
+        className={`fixed top-0 left-0 w-full h-[80px] z-[80] transition duration-500 border-b border-gray-200 dark:border-gray-700 ${
           active
-            ? "dark:bg-opacity-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-black fixed top-0 left-0 w-full h-[80px] z-[80] transition duration-500 border-b border-gray-200 dark:border-gray-700"
-            : "w-full h-[80px] z-[80] border-b border-gray-200 dark:border-gray-700"
+            ? "dark:bg-opacity-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-black"
+            : "bg-white dark:bg-gray-900"
         }`}
       >
         <div className="w-[95%] 800px:w-[92%] m-auto py-2 h-full">
