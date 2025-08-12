@@ -7,6 +7,7 @@ import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import CustomModal from "../utils/CustomModal";
 import Login from "../components/Auth/Login";
 import Signup from "../components/Auth/Signup";
+import Verification from "../components/Auth/Verification"
 
 type Props = {
   open: boolean;
@@ -135,6 +136,25 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
           )}
         </>
       )}
+
+{route === "verification" && (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={Verification}
+            />
+          )}
+        </>
+      )}
+
+
+
+
+
     </div>
   );
 };
