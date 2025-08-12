@@ -6,6 +6,7 @@ import { ThemeSwitcher } from "../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import CustomModal from "../utils/CustomModal";
 import Login from "../components/Auth/Login";
+import Signup from "../components/Auth/Signup";
 
 type Props = {
   open: boolean;
@@ -38,10 +39,11 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
   return (
     <div className="w-full relative">
       <div
-        className={`fixed top-0 left-0 w-full h-[80px] z-[80] transition duration-500 border-b border-gray-200 dark:border-gray-700 ${active
+        className={`fixed top-0 left-0 w-full h-[80px] z-[80] transition duration-500 border-b border-gray-200 dark:border-gray-700 ${
+          active
             ? "dark:bg-opacity-50 dark:bg-gradient-to-b dark:from-gray-900 dark:to-black"
             : "bg-white dark:bg-gray-900"
-          }`}
+        }`}
       >
         <div className="w-[95%] 800px:w-[92%] m-auto py-2 h-full">
           <div className="w-full h-[80px] flex items-center justify-between p-3">
@@ -88,8 +90,8 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
                 <div className="w-[70%] fixed z-[999999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
                   <NavItems activeItem={activeItem} isMobile={true} />
 
-                  <HiOutlineUserCircle 
-                    size={25} 
+                  <HiOutlineUserCircle
+                    size={25}
                     className="cursor-pointer ml-5 my-2 text-black dark:text-white"
                     onClick={() => {
                       setRoute("login");
@@ -106,24 +108,33 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
           </div>
         </div>
       </div>
-      {
-        route === "login" && (
-          <>
-            {
-              open && (
-                <CustomModal
-                  open={open}
-                  setOpen={setOpen}
-                  setRoute={setRoute}
-                  activeItem={activeItem}
-                  component={Login}
-                />
-              )
-            }
-          </>
+      {route === "login" && (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={Login}
+            />
+          )}
+        </>
+      )}
 
-        )
-      }
+      {route === "signup" && (
+        <>
+          {open && (
+            <CustomModal
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={Signup}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };
