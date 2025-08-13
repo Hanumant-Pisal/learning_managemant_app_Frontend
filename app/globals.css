@@ -15,9 +15,47 @@
 }
 
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
 
 body {
-  color:rgb(var(--foreground-rgb))
+  color: rgb(var(--foreground-rgb));
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+}
+
+/* For WebKit browsers (Chrome, Safari, etc.) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
 }
 
 .hero_animation {
@@ -44,5 +82,31 @@ body {
     83.33% {
         opacity: 0.4;
     }
+}
+
+
+@keyframes shake {
+  0% {
+   transform: translateX(0);
+   }
+  20% {
+   transform: translateX(-2px);
+   }
+  40% {
+   transform: translateX(2px);
+   }
+  60% {
+   transform: translateX(-2px);
+   }
+  80% {
+   transform: translateX(2px);
+   }
+  100% {
+   transform: translateX(0);
+   }
+}
+
+.shake {
+   animation: shake 0.5s ease-in-out;
 }
 
