@@ -1,8 +1,9 @@
 import { styles } from '@/app/styles/style';
-import React, { FC, useState, useRef } from 'react'
+import React, { FC, useState, useRef, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
-
+import { useSelector } from 'react-redux'
 import { VscWorkspaceTrusted } from 'react-icons/vsc';
+import { useActivationMutation } from '@/redux/features/auth/authApi';
 
 type Props = {
     setRoute: (route: string) => void;
@@ -16,7 +17,29 @@ type VerifyNumber = {
 };
 
 const Verification: FC<Props> = ({ setRoute }) => {
+    const { token } = useSelector((state: any) => state.auth);
+    const [activationState, { isSuccess, error }] = useActivationMutation();
     const [invalidError, setInvalidError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success("Account activated successfully")
+            setRoute("login")
+        }
+
+        if (error) {
+            if ("data" in error) {
+                const errorData = error as any;
+                toast.error(errorData.data.message)
+                setInvalidError(true)
+
+            } else {
+                console.log("An error occurred", error)
+            }
+        }
+    }, [isSuccess, error])
+
+
     const inputRefs = [
         useRef<HTMLInputElement>(null),
         useRef<HTMLInputElement>(null),
@@ -32,7 +55,16 @@ const Verification: FC<Props> = ({ setRoute }) => {
     });
 
     const verificationHandler = async () => {
-        setInvalidError(true)
+        const verificationNumber = Object.values(verifyNumber).join("")
+        if (verificationNumber.length !== 4) {
+            setInvalidError(true);
+            return;
+        }
+
+        await activationState({
+            activation_token: token,
+            activation_code: verificationNumber,
+        })
     }
 
     const handleInputChange = (index: number, value: string) => {
@@ -65,7 +97,7 @@ const Verification: FC<Props> = ({ setRoute }) => {
                         type="number"
                         key={key}
                         ref={inputRefs[index]}
-                        className={`w-[65px] h-[65px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center ${invalidError
+                        className={`w-[65px] h-[65px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center text-center font-bold text-xl ${invalidError
                             ? "shake border-red-500"
                             : "dark:border-white border-[#0000004a]"
                             }`}
