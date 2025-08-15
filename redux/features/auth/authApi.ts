@@ -8,6 +8,18 @@ type RegistrationResponse = {
 
 type RegistrationData = {}; // Define your registration data type here
 
+type SocialAuthRequest = {
+  email: string;
+  name: string;
+  avatar: string;
+};
+
+type SocialAuthResponse = {
+  accessToken: string;
+  user: any; // Replace 'any' with your user type
+  message: string;
+};
+
 export const authApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         register: builder.mutation<RegistrationResponse, RegistrationData>({
@@ -52,9 +64,10 @@ export const authApi = apiSlice.injectEndpoints({
             async onQueryStarted(arg, { queryFulfilled, dispatch }) {
                 try {
                     const result = await queryFulfilled;
+                    console.log('Login successful. User data:', result.data.user);
                     dispatch(
-                        userLoggedIn({  // Should use userLoggedIn instead of userRegistration
-                            accessToken: result.data.accessToken,  // Changed from activationToken to accessToken
+                        userLoggedIn({
+                            accessToken: result.data.accessToken,
                             user: result.data.user
                         })
                     );
@@ -63,10 +76,35 @@ export const authApi = apiSlice.injectEndpoints({
                     // You might want to dispatch an error action here
                 }
             }
-        })
+        }),
+
+        socialAuth: builder.mutation<SocialAuthResponse, SocialAuthRequest>({
+            query: ({ email, name, avatar }) => ({
+              url: "social-auth",
+              method: "POST",
+              body: { email, name, avatar },
+              credentials: "include" as const,
+            }),
+            async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+              try {
+                const { data } = await queryFulfilled;
+                dispatch(
+                  userLoggedIn({
+                    accessToken: data.accessToken,
+                    user: data.user,
+                  })
+                );
+              } catch (error: any) {
+                console.error('Social auth failed:', error);
+                // You might want to dispatch an error action here
+                // dispatch(authError(error.message));
+              }
+            },
+          }),
+          
 
 
     })
 });
 
-export const { useRegisterMutation, useActivationMutation, useLoginMutation } = authApi;
+export const { useRegisterMutation, useActivationMutation, useLoginMutation, useSocialAuthMutation } = authApi;

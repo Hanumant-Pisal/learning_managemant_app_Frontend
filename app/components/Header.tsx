@@ -1,17 +1,23 @@
 "use client";
+
+import { FC, useState, useEffect } from "react";
 import Link from "next/link";
-import React, { FC, useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useSelector } from "react-redux";
+import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+
+import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
 import NavItems from "../utils/NavItems";
 import { ThemeSwitcher } from "../utils/ThemeSwitcher";
-import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import CustomModal from "../utils/CustomModal";
 import Login from "../components/Auth/Login";
 import Signup from "../components/Auth/Signup";
-import Verification from "../components/Auth/Verification"
-import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
-import Image from "next/image";
-import avatar from "../../public/asset/avatar.webp";
+import Verification from "../components/Auth/Verification";
+import avatar from "../../public/asset/user.webp";
 
 type Props = {
   open: boolean;
@@ -21,28 +27,64 @@ type Props = {
   setRoute: (route: string) => void;
 };
 
+interface AuthState {
+  auth: {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      avatar?: string;
+      role: string;
+    } | null;
+  };
+}
+
 const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
-  const [active, setActive] = useState(false);
-  const [openSidebar, setOpenSidebar] = useState(false);
-  const { user } = useSelector((state: any) => state.auth)
+  const [active, setActive] = useState<boolean>(false);
+  const [openSidebar, setOpenSidebar] = useState<boolean>(false);
+  const { user } = useSelector((state: AuthState) => state.auth);
+  const { data } = useSession();
+  const [socialAuth] = useSocialAuthMutation();
+  const router = useRouter();
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 80) {
-        setActive(true);
-      } else {
-        setActive(false);
+  useEffect(() => {
+    const handleSocialAuth = async () => {
+      if (data?.user && !user) {
+        try {
+          const userData = data.user as { email?: string; name?: string; image?: string };
+          await socialAuth({
+            email: userData.email || '',
+            name: userData.name || '',
+            avatar: userData.image || '',
+          }).unwrap();
+          toast.success('Login successful!');
+          router.refresh();
+        } catch (error) {
+          console.error('Social login failed:', error);
+          toast.error('Failed to login with social account');
+        }
       }
-    });
-  }
+    };
 
-  const handleClose = (e: any) => {
-    if (e.target.id === "screen") {
+    handleSocialAuth();
+  }, [data, user, socialAuth, router]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setActive(window.scrollY > 80);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.currentTarget.id === "screen") {
       setOpenSidebar(false);
     }
   };
 
-  console.log(user)
+
 
   return (
     <div className="w-full relative">
@@ -81,15 +123,16 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
                         alt=""
                         className="w-[30px] h-[30px] rounded-full cursor-pointer"
                       />
-
                     </Link>
-
                   ) : (
-                    <HiOutlineUserCircle
-                      size={25}
-                      className="hidden 800px:block cursor-pointer dark:text-white text-black"
-                      onClick={() => setOpen(true)}
-                    />
+                    <>
+
+                      <HiOutlineUserCircle
+                        size={25}
+                        className="sm:hidden lg:block cursor-pointer dark:text-white text-black"
+                        onClick={() => setOpen(true)}
+                      />
+                    </>
                   )
                 }
 
